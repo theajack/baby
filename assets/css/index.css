@@ -198,9 +198,6 @@ body{
   padding: 2px 6px;
   cursor:pointer;
 }
-#musicBtn.stop{
-  background-color:rgba(255,0,0,.5);
-}
 #musicImg{
   height:20px;
 }
@@ -234,7 +231,17 @@ body{
 .page-item.odd{
   color:rgb(251,131,175);
 }
-
+#musicBtn{
+  background-color:rgba(255,0,0,.5);
+}
+#musicBtn.spin{
+  animation: j-spin 2s infinite linear ;
+  background-color:transparent;
+}
+@keyframes j-spin{
+  from{transform:rotate(0)}
+  to{transform:rotate(360deg)}
+}
 
 @media screen and (min-width:1000px) {
   .p-title{

@@ -12,7 +12,7 @@ var data=[
     "上课的时候我画了一个我们的logo，后来好长一段时间我们都是用这个做头像",
     "回校之后咱们去吃了自助餐"],
   ["不要拍我！（端午节的时候去民耀路吃的村夫烤鱼。）","好小好小的小指甲。嘿嘿"],
-  ["在备战期末的时候我病了，尿结石，你陪我去了医院，还有有你一直陪着我。后来就这么第一次见了我爸妈。"],
+  ["在备战期末的时候我病了，尿结石，你陪我去了医院，还好有你一直陪着我。后来就这么第一次见了我爸妈。"],
   ["归来之后除了好了期末事宜之后，我们去了上海动物园，这也是我们第一次严格意义上的出去玩",
     "拍票票也一直成为了我们的习惯",
     "最喜欢的剪刀手"],
@@ -104,18 +104,12 @@ var title=[
   "24.佘山之旅",
   "25.宝宝，我爱你"
 ];
-var musicHtml='<embed src="http://kg.qq.com/node/play?s=MMzC1RMdmXlp0dKm&g_f=personal" id="music" autostart="true" loop="true" width="0" height="0"/>';
 var pageIndex=0;
 var imgIndex=0;
 var pageNum=data.length;
 J.ready(function(){
   h=J.height();
   w=J.width();
-  if(!J.isMobile()){
-    J.id("music").remove();
-  }else{
-    J.id("musicBtn").show().clk(changeMusic);
-  }
   J.id("validate").css({
     width:w+"px",
     height:h+"px"
@@ -137,8 +131,9 @@ function start(){
     document.addEventListener('touchend',touch, false);  
   }else{
     document.onmousewheel=pcWheel;
-    J.id("musicBtn").show().clk(changeMusic);
   }
+  J.id("musicBtn").show().clk(changeMusic);
+  playMusic();
   var wrapper=J.id("pageWrapper");
   data.each(function(item,i){
     wrapper.append(geneSinglePage(item,i));
@@ -173,9 +168,6 @@ function start(){
       "mousemove":"changeCursor(this,event)",
       "click":"changePcImg(this)"
     });
-  }
-  if(!J.isMobile()){
-    addMusic();
   }
 }
 function changeCursor(obj,event){
@@ -375,28 +367,21 @@ function touch (event) {
 } 
 var musicOn=true;
 var t;
-function addMusic(){
-  J.body().append(musicHtml);
-  J.id("musicBtn").spin().removeClass("stop");
-  t=setTimeout(function(){
-    J.id("music").remove();
-    addMusic();
-  },216000);
+function playMusic(){
+  J.id("musicBtn").addClass("spin");
+  J.id("music").play();
+  musicOn=true;
+}
+function pauseMusic(){
+  J.id("music").pause();
+  J.id("musicBtn").removeClass("spin");
+  musicOn=false;
 }
 function changeMusic(){
-  if(J.isMobile()){
-    J.id("music").remove();
-    J.id("musicBtn").remove();
+  if(musicOn){
+    pauseMusic()
   }else{
-    if(musicOn){
-      J.id("music").remove();
-      J.id("musicBtn").stopSpin().addClass("stop");
-      musicOn=false;
-      clearTimeout(t);
-    }else{
-      addMusic();
-      musicOn=true;
-    }
+    playMusic();
   }
 }
 window.onkeydown=function(event){
