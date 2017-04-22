@@ -70,6 +70,7 @@ body{
   cursor:pointer;
 }
 .input{
+  text-align: center;
   height: 30px;
   padding-left: 5px;
   margin: 5px;
@@ -101,6 +102,7 @@ body{
   margin: 0 5px;
   color:transparent;
   transform:rotate(90deg);
+  -webkit-transform:rotate(90deg);
   border-radius:50%;
   cursor:pointer;
   transition:all .3s linear;
@@ -110,6 +112,7 @@ body{
   color:rgb(87,186,255);
   background-color:#fff!important;
   transform:rotate(0deg);
+  -webkit-transform:rotate(0deg);
   border-radius:5px;
 }
 .p-scrollbar{
