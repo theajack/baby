@@ -236,6 +236,7 @@ body{
 }
 #musicBtn.spin{
   animation: j-spin 2s infinite linear ;
+  -webkit-animation: j-spin 2s infinite linear ;
   background-color:transparent;
 }
 @keyframes j-spin{
