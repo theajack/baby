@@ -72,7 +72,10 @@ var data=[
     "尝试做可乐鸡翅",
     "和妹妹一起换新手机"],
   ["后来咱们去了佘山，绑一个小马尾",
-    "山顶上的合照"]
+    "山顶上的合照"],
+  ["满满的合照",
+    "我只选了其中的一部分",
+    "这里是咱们所有电影票和门票，有些电影票咱们可能没有拍。宝宝，我会一直对你好的，相信我，我爱你老婆！两周年快乐！"]
 ];
 var title=[
   "1.宝宝，咱们两周年了！",
@@ -98,7 +101,8 @@ var title=[
   "21.野生动物园之旅",
   "22.上班的第一个春节",
   "23.嘉定的生活",
-  "24.奓山之旅"
+  "24.佘山之旅",
+  "25.宝宝，我爱你"
 ];
 var musicHtml='<embed src="http://kg.qq.com/node/play?s=MMzC1RMdmXlp0dKm&g_f=personal" id="music" autostart="true" loop="true" width="0" height="0"/>';
 var pageIndex=0;
@@ -107,7 +111,11 @@ var pageNum=data.length;
 J.ready(function(){
   h=J.height();
   w=J.width();
-  
+  if(!J.isMobile()){
+    J.id("music").remove();
+  }else{
+    J.id("musicBtn").show().clk(changeMusic);
+  }
   J.id("validate").css({
     width:w+"px",
     height:h+"px"
@@ -117,10 +125,20 @@ J.ready(function(){
     if(value=="0503"){
       J.id("validate").fadeOut();
       start();
+    }else{
+      J.show("密码错误","error");
     }
   })
 });
 function start(){
+  if(J.isMobile()){
+    document.addEventListener('touchstart',touch, false);  
+    document.addEventListener('touchmove',touch, false);  
+    document.addEventListener('touchend',touch, false);  
+  }else{
+    document.onmousewheel=pcWheel;
+    J.id("musicBtn").show().clk(changeMusic);
+  }
   var wrapper=J.id("pageWrapper");
   data.each(function(item,i){
     wrapper.append(geneSinglePage(item,i));
@@ -148,9 +166,50 @@ function start(){
   wrapper.show();
   J.class("page").css("height",h+"px");
   setTimeout(function(){
-    showContent()
+    showContent();
   },300);
-  addMusic();
+  if(!J.isMobile()){
+    J.class("p-scrollbar").on({
+      "mousemove":"changeCursor(this,event)",
+      "click":"changePcImg(this)"
+    });
+  }
+  if(!J.isMobile()){
+    addMusic();
+  }
+}
+function changeCursor(obj,event){
+  var dirc=obj.data("dirc");
+  if(event.clientX>w/2){
+    if(dirc!="right"){
+      obj.data("dirc","right");
+      obj.css("cursor","url(assets/images/arrow_right.png),auto");
+    }
+  }else{
+    if(dirc!="left"){
+      obj.data("dirc","left");
+      obj.css("cursor","url(assets/images/arrow_left.png),auto");
+    }
+  }
+}
+function changePcImg(obj){
+  if(obj.data("dirc")=="right"){
+    left();
+  }else{
+    right();
+  }
+}
+function pcWheel(event){
+  event.preventDefault();
+  if(canMove){
+    canMove=false;
+    if(event.deltaY>0){
+      up();
+    }else{
+      down();
+    }
+    setTimeout(function(){canMove=true},500);
+  }
 }
 function showContent(){
   J.id("pageWrapper").child(pageIndex).findClass("p-scrollbar").child(imgIndex).child().addClass("show");
@@ -179,11 +238,9 @@ function changeImg(obj){
   J.class("p-scrollbar")[pageIndex].css("left",(-i*w)+"px");
   showContent();
 }
-var classes=["scale","top","right","left","bottom","rotate1","rotate2"]
+var classes=["top","right","left","bottom","rotate1","rotate2"]
 function geneSinglePage(item,i){
   var a="";
-  var cls1=classes[J.random(0,classes.length-1)];
-  var cls2=classes[J.random(0,classes.length-1)];
   var s='<div class="page">\
         <div class="p-head">\
           <div class="p-title">'+title[i]+'</div>\
@@ -192,6 +249,8 @@ function geneSinglePage(item,i){
           <div class="p-scrollbar">';
           a+='<div class="p-point-w">';
           item.each(function(contItem,j){
+            var cls1=classes[J.random(0,classes.length-1)];
+            var cls2=classes[J.random(0,classes.length-1)];
             s+='<div class="p-img-wrapper">\
               <div class="p-content '+cls1+'">'+contItem+'</div>\
               <div class="p-img '+cls2+'"><div class="p-img-div" style= "background-image:url(\'assets/images/'+(i+1)+'-'+(j+1)+'.JPG\')"></div></div>\
@@ -220,6 +279,8 @@ function right(){
     J.class("p-scrollbar")[pageIndex].css("left","+="+w+"px")
     active(J.class("p-point-w")[pageIndex].child()[imgIndex]);
     showContent();
+  }else{
+    J.show("已经是第一张！","warn")
   }
 }
 function left(){
@@ -229,6 +290,8 @@ function left(){
     J.class("p-scrollbar")[pageIndex].css("left","-="+w+"px");
     active(J.class("p-point-w")[pageIndex].child()[imgIndex]);
     showContent();
+  }else{
+    J.show("已经是最后一张！","warn")
   }
 }
 function up(){
@@ -237,6 +300,8 @@ function up(){
     pageIndex++;
     upDownCom("-="+h);
     showContent();
+  }else{
+    J.show("已经到底啦！","warn")
   }
 }
 function down(){
@@ -245,6 +310,8 @@ function down(){
     pageIndex--;
     upDownCom("+="+h);
     showContent();
+  }else{
+    J.show("已经到顶啦！","warn")
   }
 }
 function upDownCom(t){
@@ -270,9 +337,6 @@ function checkBgColor(){
     bgColor=bgColorOdd;
   }
 }
-document.addEventListener('touchstart',touch, false);  
-document.addEventListener('touchmove',touch, false);  
-document.addEventListener('touchend',touch, false);  
 var startY,moveY,canMove=true;
 var startX,moveX;
 function touch (event) {  
@@ -320,14 +384,19 @@ function addMusic(){
   },216000);
 }
 function changeMusic(){
-  if(musicOn){
+  if(J.isMobile()){
     J.id("music").remove();
-    J.id("musicBtn").stopSpin().addClass("stop");
-    musicOn=false;
-    clearTimeout(t);
+    J.id("musicBtn").remove();
   }else{
-    addMusic();
-    musicOn=true;
+    if(musicOn){
+      J.id("music").remove();
+      J.id("musicBtn").stopSpin().addClass("stop");
+      musicOn=false;
+      clearTimeout(t);
+    }else{
+      addMusic();
+      musicOn=true;
+    }
   }
 }
 window.onkeydown=function(event){
